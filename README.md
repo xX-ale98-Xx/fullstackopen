@@ -1,2 +1,2 @@
 # fullstackopen
-Full course from the Helsinkiuniversity
+Full course from the Helsinki University
