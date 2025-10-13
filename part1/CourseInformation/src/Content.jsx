@@ -1,9 +1,12 @@
-export default function Header({ parts, exerNum }) {
+import Part from "./Part"
+
+export default function Content({ parts, exerNum }) {
   return (
     <div>
-      <p>{parts[0]}: {exerNum[0]}</p>
-      <p>{parts[1]}: {exerNum[1]}</p>
-      <p>{parts[2]}: {exerNum[2]}</p>
+      { parts.map((part, i) => (
+        <Part key={part.id ?? i} part={part} exerNum={exerNum[i]} />
+      )) 
+      }
     </div>
   )
 }

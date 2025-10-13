@@ -1,4 +1,4 @@
-export default function Header({ exerNum }) {
+export default function Total({ exerNum }) {
   const total = exerNum.reduce((sum, curr) => sum + curr, 0)
   
   return (
