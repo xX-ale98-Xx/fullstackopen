@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import Button from './components/Button'
 
+function createVotes(anecdotes) {
+  const votes = {};
+  for (const anecdote of anecdotes) {
+    votes[anecdote]=0;
+  };
+  return votes;
+};
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -12,15 +20,32 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-   
-  const [selected, setSelected] = useState(0)
 
-  const handleClick = (max) => {setSelected(Math.floor(Math.random() * max))};
+  const [votes, setVotes] = useState(createVotes(anecdotes));
+   
+  const [selected, setSelected] = useState(0);
+  const [shownVote, setShownVote] = useState(0);
+
+  const handleNext = (max) => {const random = Math.floor(Math.random() * max); setShownVote(votes[anecdotes[random]]); setSelected(random)};
+  
+  const handleVote = (anecdote) => {
+    const volatile = {...votes};
+    volatile[anecdote]+=1; 
+    console.log('prev: ', votes, 'next: ', volatile); 
+    setVotes(volatile);
+    setShownVote(volatile[anecdote]);
+  };
+  
 
   return (
     <div>
       {anecdotes[selected]}
-      <Button text='next anecdote' onClick={() => handleClick(anecdotes.length)}/>
+      <p>Votes: {shownVote}</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <Button text='next anecdote' onClick={() => handleNext(anecdotes.length)}/>
+        <Button text='vote' onClick={() => handleVote(anecdotes[selected])}/>
+      </div>
+      
     </div>
   )
 }
