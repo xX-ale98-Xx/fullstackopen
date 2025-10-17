@@ -53,6 +53,8 @@ const App = () => {
     setMaxVotesAn(maxAn);
     setMaxVotesNum(maxVot);
   };
+  ;
+  
   
 
   return (
