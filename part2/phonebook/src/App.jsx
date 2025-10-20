@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+import Filter from './components/Filter'
+import Form from './components/Form'
+import List from './components/FilteredList'
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -10,12 +14,13 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [filterName, setFilterName] = useState('');
   const [newPhone, setNewPhone] = useState('');
-  const filterRegex = new RegExp(filterName, 'i');
+  
 
   const addName = (event) => {
     event.preventDefault();
+    const newPersons = [...persons, {name: newName, number: newPhone, id: persons.length + 1}];
     const exist = persons.find(person => person.name.toUpperCase() === newName.toUpperCase());
-    exist ? alert(`"${newName}" already exists in the phonebook. Insert a different name.`) : setPersons([...persons, {name: newName, phone: newPhone}]);
+    exist ? alert(`"${newName}" already exists in the phonebook. Insert a different name.`) : setPersons(newPersons);
   }
 
   const handleNameChange = (event) => {
@@ -27,7 +32,7 @@ const App = () => {
   const handlePhoneChange = (event) => {
     const phone = event.target.value;
     setNewPhone(phone);
-    // console.log(phone);
+    // console.log('handlePhoneChange:', phone);
   }
 
   const handleFilterChange = (event) => {
@@ -38,24 +43,16 @@ const App = () => {
 
   return (
     <div>
+
       <h1>Phonebook</h1>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px', maxWidth: '200px'}}>
-        Filter the phonebook by name: <input value={filterName} onChange={handleFilterChange}/>
-      </div>
+      <Filter name={filterName} onChange={handleFilterChange}/>
+      
       <h2>Add someone to phonebook</h2>
-      <form onSubmit={addName}>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px', maxWidth: '200px'}}>
-          name: <input value={newName} onChange={handleNameChange}/>
-          phone: <input value={newPhone} onChange={handlePhoneChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form onSubmit={addName} states={[newName, handleNameChange, newPhone, handlePhoneChange]}/>
+
       <h2>Numbers</h2>
-      <ul>
-        {filterName ? persons.filter(person => person.name.match(filterRegex)).map((person) => <li key={person.id}>{person.name}: {person.number} </li>) : persons.map((person) => <li key={person.id}>{person.name}: {person.number}</li>)}
-      </ul>
+      <List filterName={filterName} persons={persons}/>
+
     </div>
   )
 }
