@@ -1,9 +1,12 @@
-
-export default function FilteredList({filterName, persons}) {
+import Person from './Person'
+export default function FilteredList({filterName, persons, handleDelete}) {
   const filterRegex = new RegExp(filterName, 'i');
+  let list = [];
+  filterName ? list = persons.filter(person => person.name.match(filterRegex)) : list = persons;
+  // console.log('Persons array: ', persons)
   return ( 
     <ul>
-        {filterName ? persons.filter(person => person.name.match(filterRegex)).map((person) => <li key={person.id}>{person.name}: {person.number} </li>) : persons.map((person) => <li key={person.id}>{person.name}: {person.number}</li>)}
+      {list.map( person => <Person key={person.id} person={person} handleDelete={handleDelete}/>)}
     </ul>
   )
 }
