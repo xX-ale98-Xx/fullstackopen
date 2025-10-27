@@ -5,6 +5,7 @@ import numbers from './services/numbers'
 import Filter from './components/Filter'
 import Form from './components/Form'
 import List from './components/FilteredList'
+import Notification from './components/Notification'
 
 const App = () => {
 
@@ -15,42 +16,80 @@ const App = () => {
       })  
   }, []);
 
- 
-
   const [persons, setPersons] = useState([]); 
   const [newName, setNewName] = useState('');
   const [filterName, setFilterName] = useState('');
   const [newPhone, setNewPhone] = useState('');
-  
+  // const [notification, setNotification] = useState(null);
+  const [message, setMessage] = useState({type: null , text: null});
+  // const [error, setError] = useState(null);
 
-  const addName = (event) => {
+  const addName = async (event) => {
     event.preventDefault();
-    const repeatedPers = persons.find(person => person.name.toUpperCase() === newName.toUpperCase());
 
-    if (repeatedPers){
-      const id = repeatedPers.id;
-      if (window.confirm(`"${newName}" already exists in the phonebook. Do you want to change the phone number?`)) {
-        console.log('put logic')
-        numbers.update(id, {name: newName, number: newPhone, id: id});
-        const newPersons = persons.filter(p => p.id !== id).concat({name: newName, number: newPhone, id: id});
+    const repeatedPers = persons.find(
+      (person) => person.name.toUpperCase() === newName.toUpperCase()
+    );
+
+    try {
+      // CASE 1: persona già esistente -> update
+      if (repeatedPers) {
+        const id = repeatedPers.id;
+
+        if (
+          !window.confirm(
+            `"${newName}" already exists. Do you want to change the phone number?`
+          )
+        ) {
+          return;
+        }
+
+        // WAIT server response
+        const updated = await numbers.update(id, {
+          name: newName,
+          number: newPhone,
+        });
+
+        // update local state
+        const newPersons = persons
+          .filter((p) => p.id !== id)
+          .concat(updated);
+
         setPersons(newPersons);
-        setNewName('');
-        setNewPhone('');
-      };
+      }
 
-    } else {
+      // CASE 2: persona nuova -> create
+      else {
+        const response = await numbers.create({
+          name: newName,
+          number: newPhone,
+        });
 
-      numbers.create({name: newName, number: newPhone})
-      .then(response => {
-        // console.log('Posted, response: ', response);
-        const newPersons = persons.concat(response.data);
-        setPersons(newPersons);
-        setNewName('');
-        setNewPhone('');
-      });
+        setPersons(persons.concat(response.data));
+      }
 
-    };   
-  };
+      // clear form fields
+      setNewName("");
+      setNewPhone("");
+
+      // SUCCESS NOTIFICATION
+      const text = `"${newName}" saved successfully!`;
+      setMessage({ type: "notification", text });
+      setTimeout(() => setMessage({ type: null, text: null }), 5000);
+    } catch (e) {
+      console.error("Server error:", e);
+
+      // ERROR NOTIFICATION
+      const text = `"${newName}" was already removed from server!`;
+      setMessage({ type: "error", text });
+      setTimeout(() => setMessage({ type: null, text: null }), 5000);
+
+      // OPTIONAL: remove stale entry from UI
+      if (repeatedPers) {
+        setPersons(persons.filter((p) => p.id !== repeatedPers.id));
+      }
+    }
+};
 
   const removeName = (id) => {
     
@@ -88,6 +127,7 @@ const App = () => {
       <Filter name={filterName} onChange={handleFilterChange}/>
       
       <h2>Add someone to phonebook</h2>
+      <Notification message={message}/>
       <Form onSubmit={addName} states={[newName, handleNameChange, newPhone, handlePhoneChange]}/>
 
       <h2>Numbers</h2>

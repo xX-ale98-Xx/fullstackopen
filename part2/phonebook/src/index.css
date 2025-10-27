@@ -1,0 +1,19 @@
+/* Proprietà Comuni a entrambe le notifiche */
+.notification, .errNot {
+    border: solid 1px;
+    border-color: #e0e0e0;
+    border-radius: 8px;
+    padding: 16px 16px;
+}
+
+/* Proprietà specifiche per la notifica "successo" */
+.notification {
+    color: green;
+    background: hsl(84, 80%, 80%, 0.8);
+}
+
+/* Proprietà specifiche per la notifica "errore" */
+.errNot {
+    color: red; /* Modifica solo colore testo */
+    background: hsla(0, 80%, 80%, 0.8); /* Modifica solo sfondo */
+}
