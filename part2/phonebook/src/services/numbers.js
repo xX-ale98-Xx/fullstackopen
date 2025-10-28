@@ -3,7 +3,7 @@ const baseUrl = 'http://localhost:3001/persons'
 
 const getAll = () => {
     const response = axios.get(baseUrl)
-    return response.then(response => response.data)
+    return response.then(response => response.data.concat({name: 'gigi', number: '123', id: 69}))
 }
 
 const create = (noteObject) => {

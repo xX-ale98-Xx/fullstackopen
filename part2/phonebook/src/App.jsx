@@ -44,16 +44,20 @@ const App = () => {
           return;
         }
 
+        console.log('sincrono')
+
         // WAIT server response
         const updated = await numbers.update(id, {
           name: newName,
           number: newPhone,
+          id: id
         });
+        
+        console.log('asincrono')
 
         // update local state
-        const newPersons = persons
-          .filter((p) => p.id !== id)
-          .concat(updated);
+        const newPersons = persons.filter(p => p.id !== id)
+          .concat(updated.data);
 
         setPersons(newPersons);
       }
@@ -92,10 +96,17 @@ const App = () => {
 };
 
   const removeName = (id) => {
-    
+    const thisName = persons.find(p => p.id === id)    
     // console.log(`${id} needs to be canceled`);
     if (window.confirm(`Do you want to cancel this contact?`)) {
-      numbers.cancel(id).catch(e => console.log("Contact not deleted. Error: ", e));}
+          numbers.cancel(id).catch(e => {
+            console.log("Contact not deleted. Error: ", e)
+            // ERROR NOTIFICATION
+            const text = `"${thisName.name}" was already removed from server!`;
+            setMessage({ type: "error", text });
+            setTimeout(() => setMessage({ type: null, text: null }), 5000);}
+          );
+        }
     else {return};
     const newPersons = persons.filter(p => p.id !== id);
     // console.log(newPersons)
