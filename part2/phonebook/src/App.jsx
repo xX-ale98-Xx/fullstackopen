@@ -44,7 +44,7 @@ const App = () => {
           return;
         }
 
-        console.log('sincrono')
+        // console.log('sincrono')
 
         // WAIT server response
         const updated = await numbers.update(id, {
@@ -53,7 +53,7 @@ const App = () => {
           id: id
         });
         
-        console.log('asincrono')
+        // console.log('asincrono')
 
         // update local state
         const newPersons = persons.filter(p => p.id !== id)
