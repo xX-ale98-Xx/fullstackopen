@@ -78,7 +78,7 @@ const App = () => {
 
       // SUCCESS NOTIFICATION
       const text = `"${newName}" saved successfully!`;
-      setMessage({ type: "notification", text });
+      setMessage({ type: "notification", text: text });
       setTimeout(() => setMessage({ type: null, text: null }), 5000);
     } catch (e) {
       console.error("Server error:", e);
