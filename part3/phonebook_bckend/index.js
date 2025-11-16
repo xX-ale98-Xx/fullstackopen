@@ -1,7 +1,19 @@
 const express = require('express');
 const morgan = require('morgan');
-
+const cors = require('cors');
 const app = express();
+
+const corsOptions = {
+  origin: 'http://127.0.0.1:5173',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.use(cors(corsOptions));
+
+app.get('/products/:id', function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+});
+
 app.use(express.json());
 // app.use(morgan('tiny'))
 app.use(morgan((tokens, req, res) => {
@@ -91,7 +103,7 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end();
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
