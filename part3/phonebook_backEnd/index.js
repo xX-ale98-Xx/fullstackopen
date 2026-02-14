@@ -1,14 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
-const cors = require('cors');
+//const cors = require('cors');
 const app = express();
 
-const corsOptions = {
-  origin: 'http://127.0.0.1:5173',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+// const corsOptions = {
+//   origin: 'http://127.0.0.1:5173',
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
 app.use(express.static("dist"));
 
 app.get('/products/:id', function (req, res, next) {
