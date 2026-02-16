@@ -3,7 +3,7 @@ const baseUrl = '/api/persons'
 
 const getAll = () => {
     const response = axios.get(baseUrl)
-    return response.then(response => response.data.concat({name: 'gigi', number: '123', id: 69}))
+    return response.then(response => response.data)
 }
 
 const create = (noteObject) => {
