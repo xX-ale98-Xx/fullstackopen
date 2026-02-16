@@ -7,26 +7,42 @@ if (process.argv.length < 3) {
 
 const password = process.argv[2];
 
-const url = `mongodb+srv://nicaale98_db_user:${password}@cluster0.pwilaux.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`;
-
+const url = `mongodb+srv://nicaale98_db_user:${encodeURIComponent(password)}@cluster0.pwilaux.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
 
 mongoose.set("strictQuery", false);
 
-mongoose.connect(url, { family: 4 });
+mongoose
+  .connect(url)
+  .then(() => {
+    // Definizione schema e modello
+    const phoneSchema = new mongoose.Schema({
+      name: String,
+      number: String,
+    });
 
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-});
+    const Phone = mongoose.model("Phone", phoneSchema);
 
-const Note = mongoose.model("Note", noteSchema);
+    // Se ci sono solo password → stampare tutti i contatti
+    if (process.argv.length === 3) {
+      console.log("phonebook:");
+      return Phone.find({}).then((persons) => {
+        persons.forEach((p) => console.log(`${p.name} ${p.number}`));
+        mongoose.connection.close();
+      });
+    }
 
-const note = new Note({
-  content: "HTML is easy",
-  important: true,
-});
+    // Se ci sono password + name + number → aggiungere contatto
+    const name = process.argv[3];
+    const number = process.argv[4];
 
-note.save().then((result) => {
-  console.log("note saved!");
-  mongoose.connection.close();
-});
+    const newPhone = new Phone({ name, number });
+
+    return newPhone.save().then((result) => {
+      console.log(`added ${name} number ${number} to phonebook`);
+      mongoose.connection.close();
+    });
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err.message);
+    mongoose.connection.close();
+  });
