@@ -72,9 +72,11 @@ app.post("/api/persons", (request, response, next) => {
       } else {
         // Se non esiste, crea nuovo
         const phone = new Phone({ name, number });
-        return phone.save().then((savedPhone) => {
-          response.json(savedPhone);
-        });
+        return phone.save()
+          .then((savedPhone) => {
+            response.json(savedPhone);
+          })
+          .catch((error) => next(error));
       }
     })
     .catch((error) => next(error));
@@ -113,7 +115,9 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
-  }
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  };
 
   next(error);
 };
