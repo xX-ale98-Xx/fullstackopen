@@ -80,12 +80,13 @@ const App = () => {
       const text = `"${newName}" saved successfully!`;
       setMessage({ type: "notification", text: text });
       setTimeout(() => setMessage({ type: null, text: null }), 5000);
-    } catch (e) {
+    } 
+    catch (e) {
       console.error("Server error:", e);
+       const errMess = e.response?.data?.error || "Unknown error";
 
       // ERROR NOTIFICATION
-      const text = `"${newName}" was already removed from server!`;
-      setMessage({ type: "error", text });
+      setMessage({ type: "error", text: errMess });
       setTimeout(() => setMessage({ type: null, text: null }), 5000);
 
       // OPTIONAL: remove stale entry from UI
